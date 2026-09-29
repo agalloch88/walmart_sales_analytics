@@ -1,0 +1,15 @@
+sources:
+  - name: walmart_raw
+    description: Raw Walmart CSVs loaded with COPY INTO (snowflake/01_load_csvs.sql).
+    database: walmart_db
+    schema: raw
+    tables:
+      - name: stores
+        description: One row per store, from stores.csv.
+      - name: department
+        description: Weekly sales per store and department, from department.csv.
+      - name: fact
+        description: >
+          Store-week conditions from fact.csv: temperature, fuel price,
+          markdowns, CPI, unemployment. Not a fact table despite the name;
+          staging renames it to stg_walmart__store_features.

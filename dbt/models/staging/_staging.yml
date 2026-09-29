@@ -1,0 +1,56 @@
+models:
+  - name: stg_walmart__stores
+    description: One row per store.
+    columns:
+      - name: store_id
+        data_tests:
+          - unique
+          - not_null
+      - name: store_type
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['A', 'B', 'C']
+      - name: store_size
+        data_tests:
+          - not_null
+
+  - name: stg_walmart__department_sales
+    description: One row per store, department and week.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [store_id, dept_id, store_date]
+    columns:
+      - name: store_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_walmart__stores')
+                field: store_id
+      - name: dept_id
+        data_tests:
+          - not_null
+      - name: store_date
+        data_tests:
+          - not_null
+
+  - name: stg_walmart__store_features
+    description: One row per store and week, from fact.csv.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [store_id, store_date]
+    columns:
+      - name: store_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_walmart__stores')
+                field: store_id
+      - name: fuel_price
+        data_tests:
+          - not_null
