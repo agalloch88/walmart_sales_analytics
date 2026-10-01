@@ -1,0 +1,23 @@
+snapshots:
+  - name: walmart_fact_table
+    relation: ref('int_walmart__fact_source')
+    description: Department-week sales with store-week conditions, versioned as SCD2.
+    config:
+      unique_key: [store_id, dept_id, date_id]
+      strategy: check
+      check_cols:
+        - store_weekly_sales
+        - store_size
+        - fuel_price
+        - store_temperature
+        - unemployment
+        - cpi
+        - markdown1
+        - markdown2
+        - markdown3
+        - markdown4
+        - markdown5
+      dbt_valid_to_current: "to_timestamp_ntz('9999-12-31')"
+      snapshot_meta_column_names:
+        dbt_valid_from: vrsn_start_date
+        dbt_valid_to: vrsn_end_date
