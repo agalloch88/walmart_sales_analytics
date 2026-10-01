@@ -1,0 +1,74 @@
+models:
+  - name: walmart_date_dim
+    description: >
+      One row per week (SCD1). date_id is the week's date as YYYYMMDD.
+      Rows update in place: insert_date never changes, and update_date
+      moves only when isholiday changes.
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "update_date >= insert_date"
+    columns:
+      - name: date_id
+        description: Surrogate key, the YYYYMMDD integer of store_date.
+        data_tests:
+          - unique
+          - not_null
+      - name: store_date
+        description: The week's date (a Friday), shared by the sales and features files.
+        data_tests:
+          - unique
+          - not_null
+      - name: isholiday
+        description: Y if the week contains a major holiday, otherwise N.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Y', 'N']
+      - name: insert_date
+        description: When the row was first inserted. Never updated.
+        data_tests:
+          - not_null
+      - name: update_date
+        description: When the row last changed.
+        data_tests:
+          - not_null
+
+  - name: walmart_store_dim
+    description: >
+      One row per store-department pair with sales (SCD1). Store attributes
+      repeat for each department, as the spec defines this dimension.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [store_id, dept_id]
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "update_date >= insert_date"
+    columns:
+      - name: store_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_walmart__stores')
+                field: store_id
+      - name: dept_id
+        data_tests:
+          - not_null
+      - name: store_type
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['A', 'B', 'C']
+      - name: store_size
+        data_tests:
+          - not_null
+      - name: insert_date
+        data_tests:
+          - not_null
+      - name: update_date
+        data_tests:
+          - not_null
