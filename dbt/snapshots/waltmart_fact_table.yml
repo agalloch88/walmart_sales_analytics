@@ -17,6 +17,8 @@ snapshots:
         - markdown3
         - markdown4
         - markdown5
+      post_hook:
+        - "update {{ this }} set update_date = vrsn_end_date where vrsn_end_date < '9999-12-31' and update_date < vrsn_end_date"
       dbt_valid_to_current: "to_timestamp_ntz('9999-12-31')"
       snapshot_meta_column_names:
         dbt_valid_from: vrsn_start_date
