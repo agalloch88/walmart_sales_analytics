@@ -1,0 +1,17 @@
+models:
+  - name: int_walmart__fact_source
+    description: One row per store, department and week. Input to the walmart_fact_table snapshot.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [store_id, dept_id, date_id]
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_walmart__department_sales')
+    columns:
+      - name: fuel_price
+        data_tests:
+          - not_null
+      - name: store_size
+        data_tests:
+          - not_null

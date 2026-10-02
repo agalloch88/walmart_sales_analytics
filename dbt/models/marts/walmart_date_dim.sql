@@ -14,7 +14,7 @@ with dates as (
 
 final as (
     select
-        to_number(to_char(store_date, 'YYYYMMDD'))  as date_id,
+        {{ to_date_id('store_date') }}              as date_id,
         store_date,
         iff(is_holiday, 'Y', 'N')                   as isholiday,
         current_timestamp()::timestamp_ntz          as insert_date,
