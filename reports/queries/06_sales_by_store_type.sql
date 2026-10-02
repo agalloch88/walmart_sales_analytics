@@ -1,3 +1,4 @@
-select store_type, store_id, store_date, weekly_sales
+select store_type, store_id, sum(weekly_sales) as total_sales
 from walmart_store_week
-order by store_type
+group by store_type, store_id
+order by store_type, total_sales desc

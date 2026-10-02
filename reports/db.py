@@ -1,10 +1,20 @@
 import os
+from decimal import Decimal
 from pathlib import Path
 
 import snowflake.connector
 from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).with_name(".env"))
+
+
+def numeric_decimals(df):
+    """Snowflake returns SUM/AVG of decimal columns as Python Decimal objects.
+    Plotly can't plot those as numbers (bars come out blank), so make them floats."""
+    for col in df.columns:
+        if df[col].dtype == object and df[col].map(lambda v: isinstance(v, Decimal)).any():
+            df[col] = df[col].astype("float64")
+    return df
 
 
 def query_df(sql: str):
@@ -20,4 +30,4 @@ def query_df(sql: str):
     ) as conn:
         df = conn.cursor().execute(sql).fetch_pandas_all()
     df.columns = df.columns.str.lower()
-    return df
+    return numeric_decimals(df)

@@ -1,5 +1,4 @@
-select store_type, sales_month,
-       avg(weekly_sales) as avg_weekly_sales
+select store_type, sales_month, sum(weekly_sales) as total_sales
 from walmart_store_week
 group by store_type, sales_month
 order by store_type, sales_month
