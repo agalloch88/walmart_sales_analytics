@@ -3,3 +3,5 @@ dbt_packages/
 logs/
 .env
 *.p8
+.venv/
+__pycache__/
